@@ -1,0 +1,70 @@
+#gitlab for local development
+
+global:
+  edition: ce
+
+  hosts:
+    domain: 192.168.56.110.nip.io
+    externalIP: 192.168.56.110
+    https: false
+  
+  ingress:
+    enabled: true
+    configureCertmanager: false
+    class: nginx
+    tls:
+      enabled: false
+
+  psql:
+
+  redis:
+
+  minio:
+    enabled: true
+
+certmanager-issuer:
+  email: cjozefzo@student.42.fr
+
+postgresql:
+  install: true
+  persistence:
+    size: 1Gi
+
+redis:
+  install: true
+  master:
+    persistence:
+      size: 1Gi
+
+minio:
+  persistence:
+    size: 1Gi
+
+gitlab:
+  gitaly:
+    persistence:
+      size: 1Gi
+
+  webservice:
+    minReplicas: 1
+    maxReplicas: 1
+    resources:
+      requests:
+        cpu: 200m
+        memory: 1.5Gi
+      limits:
+        cpu: 1
+        memory: 2.5Gi
+
+  sidekiq:
+    minReplicas: 1
+    maxReplicas: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 512Mi
+      limits:
+        cpu: 500Mi
+        memory: 512Mi
+nginx-ingress:
+  enabled: true
