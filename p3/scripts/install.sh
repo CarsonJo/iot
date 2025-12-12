@@ -16,15 +16,13 @@ EOF
 sudo apt update
 yes | sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-#install k3s
-curl -sfL https://get.k3s.io | sh -s - --node-ip 192.168.56.110
-chmod 755 /etc/rancher/k3s/k3s.yaml
-TOKEN=$(sudo cat /var/lib/rancher/k3s/server/node-token)
-echo $TOKEN > /vagrant/token
-
 #install k3d
 curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+k3d cluster create my-cluster --api-port 6443 -p "8080:80@loadbalancer"
 
+#install kubectl
+sudo curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 #install argocd
 sudo kubectl create namespace argocd
 sudo kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml

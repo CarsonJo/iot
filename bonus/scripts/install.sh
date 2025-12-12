@@ -39,6 +39,10 @@ cat /home/vagrant/.ssh/my_key.pub >> /home/vagrant/.ssh/authorized_keys
 curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
 sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
 rm argocd-linux-amd64
+#install helm
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
+chmod 700 get_helm.sh
+./get_helm.sh
 #kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d //get password to connect on browser
 #kubectl port-forward svc/argocd-server -n argocd 8080:443 //port-forward to access from browser
 #argocd login localhost:8080 //login to argocd
