@@ -23,7 +23,7 @@ Vagrant.configure("2") do |config|
 		vb.cpus = 4
 	end
 	cjozefzoS.ssh.forward_agent = "true"
-	cjozefzoS.vm.provision "file", source: "~/.ssh/id_rsa.pub",destination:"~/.ssh/my_key.pub"
+	cjozefzoS.vm.provision "file", source: "./confs/ingressroute.yaml", destination:"~/ingressroute.yaml"
 	cjozefzoS.vm.provision "shell", path: "scripts/install.sh"
   end
   # Disable automatic box update checking. If you disable this, then
