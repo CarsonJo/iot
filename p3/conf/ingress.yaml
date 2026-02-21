@@ -1,0 +1,39 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: argocd-server
+  namespace: argocd
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`argocd.127.0.0.1.nip.io`)
+      priority: 10
+      services:
+      - name: argocd-server
+        port: 80
+    - kind: Rule
+      match: Host(`argocd.127.0.0.1.nip.io`) && Headers(`Content-Type`, `application/grpc`)
+      priority: 11
+      services:
+        - name: argocd-server
+          port: 80
+          scheme: h2c
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: gitlab-web
+  namespace: gitlab
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`gitlab.127.0.0.1.nip.io`)
+      priority: 10
+      services:
+        - name: gitlab-webservice-default
+          port: 8181
+          passHostHeader: true
