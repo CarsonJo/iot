@@ -18,7 +18,7 @@ yes | sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugi
 
 #install k3d
 curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
-k3d cluster create my-cluster --api-port 6443 -p "8085:80@loadbalancer" -p "8084:8888@loadbalancer"
+k3d cluster create my-cluster --api-port 6443 -p "8085:80@loadbalancer" -p "8084:8888@loadbalancer" -a 2 -s 1
 
 #install kubectl
 sudo curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -29,38 +29,14 @@ sudo kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-
 
 sudo kubectl create namespace dev
 
-#add ssh key to authorizedkey
-#cat /home/vagrant/.ssh/my_key.pub >> /home/vagrant/.ssh/authorized_keys
 #instaling argocd cli
 curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
 sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
 rm argocd-linux-amd64
 
-sudo kubectl patch deployment argocd-server -n argocd \
-  --type='json' \
-  -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args", "value": ["--insecure"]}]'
-
 #kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d //get password to connect on browser
-
-#kubectl port-forward svc/argocd-server -n argocd 8080:443 //port-forward to access from browser
-
-#argocd login localhost:8080 //login to argocd
-
-#argocd app create will-app \
-#  --repo https://github.com/CarsonJo/cjozefzo-iot \
-#  --path . \
-#  --dest-server https://kubernetes.default.svc \
-#  --dest-namespace dev // create app
-# argocd app sync will-app//sync app
-# argocd app set will-app --sync-policy automated // automatique sync
-
-
-#argocd app create will-app --repo https://github.com/CarsonJo/cjozefzo-iot --path . --dest-server https://kubernetes.default.svc --dest-namespace dev
-
 
 sudo kubectl patch deployment argocd-server -n argocd --type='json' -p='[
   {"op": "replace", "path": "/spec/template/spec/containers/0/command", "value": ["argocd-server"]},
   {"op": "replace", "path": "/spec/template/spec/containers/0/args", "value": ["--insecure"]}
 ]'
-
-sudo kubectl apply -f p3/conf/ingress.yaml
